@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @file
+ * Nadi monitoring module for Drupal.
+ *
+ * Monitors exceptions, slow queries, HTTP errors, and application performance.
+ */

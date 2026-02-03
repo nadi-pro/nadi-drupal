@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the Nadi module.
+ */
+
+use Drupal\Core\File\FileSystemInterface;
+
+/**
+ * Implements hook_install().
+ */
+function nadi_install(): void {
+  // Create the log directory in the private files path.
+  $config = \Drupal::config('nadi.settings');
+  $logPath = $config->get('connections.log.path');
+
+  if ($logPath && str_starts_with($logPath, 'private://')) {
+    /** @var \Drupal\Core\File\FileSystemInterface $fileSystem */
+    $fileSystem = \Drupal::service('file_system');
+
+    try {
+      $fileSystem->prepareDirectory($logPath, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+      \Drupal::messenger()->addStatus(t('Nadi log directory created at @path.', ['@path' => $logPath]));
+    }
+    catch (\Exception $e) {
+      \Drupal::messenger()->addWarning(t('Could not create Nadi log directory at @path. Please create it manually.', ['@path' => $logPath]));
+    }
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function nadi_uninstall(): void {
+  // Config is automatically removed by Drupal when module is uninstalled.
+  \Drupal::messenger()->addStatus(t('Nadi monitoring module has been uninstalled.'));
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function nadi_requirements(string $phase): array {
+  $requirements = [];
+
+  if ($phase === 'runtime') {
+    $config = \Drupal::config('nadi.settings');
+    $enabled = $config->get('enabled');
+    $driver = $config->get('driver') ?? 'log';
+
+    $requirements['nadi_status'] = [
+      'title' => t('Nadi Monitoring'),
+      'value' => $enabled ? t('Enabled (@driver driver)', ['@driver' => $driver]) : t('Disabled'),
+      'severity' => $enabled ? REQUIREMENT_OK : REQUIREMENT_WARNING,
+    ];
+
+    if ($enabled && $driver === 'log') {
+      $logPath = $config->get('connections.log.path');
+      if ($logPath) {
+        $realPath = \Drupal::service('file_system')->realpath($logPath);
+        if ($realPath && is_writable($realPath)) {
+          $requirements['nadi_log_path'] = [
+            'title' => t('Nadi Log Path'),
+            'value' => $realPath,
+            'severity' => REQUIREMENT_OK,
+          ];
+        }
+        else {
+          $requirements['nadi_log_path'] = [
+            'title' => t('Nadi Log Path'),
+            'value' => $logPath,
+            'description' => t('The log directory is not writable. Please check permissions.'),
+            'severity' => REQUIREMENT_ERROR,
+          ];
+        }
+      }
+    }
+
+    if ($enabled && $driver === 'http') {
+      $apiKey = $config->get('connections.http.api_key');
+      $appKey = $config->get('connections.http.app_key');
+
+      if (empty($apiKey) || empty($appKey)) {
+        $requirements['nadi_http_keys'] = [
+          'title' => t('Nadi HTTP Configuration'),
+          'value' => t('Missing credentials'),
+          'description' => t('HTTP driver requires both API key and App key to be configured.'),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
+    }
+  }
+
+  return $requirements;
+}

@@ -1,0 +1,19 @@
+services:
+  nadi:
+    class: Nadi\Drupal\Nadi
+    arguments:
+      - '@config.factory'
+
+  nadi.event_subscriber:
+    class: Nadi\Drupal\EventSubscriber\NadiEventSubscriber
+    arguments:
+      - '@nadi'
+    tags:
+      - { name: event_subscriber }
+
+  nadi.otel_middleware:
+    class: Nadi\Drupal\Middleware\NadiOpenTelemetryMiddleware
+    arguments:
+      - '@nadi'
+    tags:
+      - { name: http_middleware, priority: 400 }
