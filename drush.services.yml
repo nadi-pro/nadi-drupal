@@ -1,0 +1,7 @@
+services:
+  nadi.commands:
+    class: Nadi\Drupal\Commands\NadiCommands
+    arguments:
+      - '@nadi'
+    tags:
+      - { name: drush.command }
