@@ -1,0 +1,7 @@
+nadi.settings:
+  path: '/admin/config/system/nadi'
+  defaults:
+    _form: '\Nadi\Drupal\Form\NadiSettingsForm'
+    _title: 'Nadi Monitoring'
+  requirements:
+    _permission: 'administer nadi'

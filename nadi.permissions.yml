@@ -1,0 +1,4 @@
+administer nadi:
+  title: 'Administer Nadi monitoring'
+  description: 'Configure Nadi monitoring settings including API keys and transport drivers.'
+  restrict access: true
