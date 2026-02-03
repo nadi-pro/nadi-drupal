@@ -1,0 +1,6 @@
+name: Nadi
+type: module
+description: 'Nadi monitoring SDK for Drupal. Monitors exceptions, slow queries, HTTP errors, and application performance.'
+package: Monitoring
+core_version_requirement: ^10.1 || ^11
+configure: nadi.settings

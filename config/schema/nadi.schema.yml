@@ -1,0 +1,108 @@
+nadi.settings:
+  type: config_object
+  label: 'Nadi settings'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enable Nadi monitoring'
+    driver:
+      type: string
+      label: 'Transport driver'
+    connections:
+      type: mapping
+      label: 'Driver connections'
+      mapping:
+        log:
+          type: mapping
+          label: 'Log driver settings'
+          mapping:
+            path:
+              type: string
+              label: 'Log directory path'
+        http:
+          type: mapping
+          label: 'HTTP driver settings'
+          mapping:
+            api_key:
+              type: string
+              label: 'API key'
+            app_key:
+              type: string
+              label: 'Application key'
+            endpoint:
+              type: string
+              label: 'API endpoint URL'
+            version:
+              type: string
+              label: 'API version'
+        opentelemetry:
+          type: mapping
+          label: 'OpenTelemetry driver settings'
+          mapping:
+            endpoint:
+              type: string
+              label: 'OTel collector endpoint'
+            service_name:
+              type: string
+              label: 'Service name'
+            service_version:
+              type: string
+              label: 'Service version'
+            deployment_environment:
+              type: string
+              label: 'Deployment environment'
+            suppress_errors:
+              type: boolean
+              label: 'Suppress OTel errors'
+    query:
+      type: mapping
+      label: 'Query monitoring settings'
+      mapping:
+        slow_threshold:
+          type: integer
+          label: 'Slow query threshold (ms)'
+    http:
+      type: mapping
+      label: 'HTTP monitoring settings'
+      mapping:
+        hidden_request_headers:
+          type: sequence
+          label: 'Hidden request headers'
+          sequence:
+            type: string
+            label: 'Header name'
+        hidden_parameters:
+          type: sequence
+          label: 'Hidden parameters'
+          sequence:
+            type: string
+            label: 'Parameter name'
+        ignored_status_codes:
+          type: sequence
+          label: 'Ignored status codes'
+          sequence:
+            type: string
+            label: 'Status code or range'
+    sampling:
+      type: mapping
+      label: 'Sampling settings'
+      mapping:
+        strategy:
+          type: string
+          label: 'Sampling strategy'
+        config:
+          type: mapping
+          label: 'Sampling configuration'
+          mapping:
+            sampling_rate:
+              type: float
+              label: 'Sampling rate'
+            base_rate:
+              type: float
+              label: 'Base rate'
+            load_factor:
+              type: float
+              label: 'Load factor'
+            interval_seconds:
+              type: float
+              label: 'Interval in seconds'
