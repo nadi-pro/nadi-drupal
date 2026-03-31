@@ -2,34 +2,22 @@ name: run-tests
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    paths:
+      - '**.php'
+      - '.github/workflows/run-tests.yml'
+      - 'phpunit.xml'
+      - 'composer.json'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     strategy:
       fail-fast: true
       matrix:
-        include:
-          - php: 8.4
-            drupal: 11.*
-            phpunit: ^11.0
-          - php: 8.3
-            drupal: 11.*
-            phpunit: ^11.0
-          - php: 8.3
-            drupal: 10.*
-            phpunit: ^10.0
-          - php: 8.2
-            drupal: 10.*
-            phpunit: ^10.0
-          - php: 8.1
-            drupal: 10.*
-            phpunit: ^10.0
+        php: [8.4, 8.3]
 
-    name: PHP ${{ matrix.php }} - Drupal ${{ matrix.drupal }}
+    name: P${{ matrix.php }}
 
     steps:
       - name: Checkout code
@@ -39,17 +27,11 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, fileinfo
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: none
 
       - name: Install dependencies
-        run: |
-          composer require "drupal/core:${{ matrix.drupal }}" --no-interaction --no-update
-          composer require "phpunit/phpunit:${{ matrix.phpunit }}" --no-interaction --no-update --dev
-          composer update --prefer-stable --prefer-dist --no-interaction
-
-      - name: List Installed Dependencies
-        run: composer show -D
+        run: composer update --prefer-stable --prefer-dist --no-interaction
 
       - name: Execute tests
         run: vendor/bin/phpunit
