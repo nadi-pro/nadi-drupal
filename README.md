@@ -84,6 +84,21 @@ composer test       # Run PHPUnit tests
 composer format     # Run Laravel Pint formatter
 ```
 
+## Security & Data Privacy
+
+> **Important:** Nadi captures and transmits application error data including
+> exception messages, stack traces, SQL queries, HTTP request details, and
+> custom content. This data may contain Personally Identifiable Information (PII).
+
+**As the consumer, you are responsible for:**
+
+- Configuring hidden headers and parameters to mask sensitive values
+- Sanitizing or redacting PII from entry content
+- Ensuring compliance with your organization's data handling policies (GDPR, HIPAA, SOC2, etc.)
+- Using HTTPS endpoints for all drivers in production environments
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting and security considerations.
+
 ## License
 
 MIT
